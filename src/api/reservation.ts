@@ -1,4 +1,4 @@
 import { post } from './http'
 
 export const getReservations = (page = 1) =>
-  post('/order/list', { page }) as any
+  post('/appointment/list', { page }) as any

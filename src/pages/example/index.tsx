@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './index.module.scss'
-import { Card, List, Upload, Input, Button, Alert, Form, Icon } from 'antd'
+import { Input, Button, Alert, Form, Icon } from 'antd'
 import { IExample } from '../../types'
 import Api from '../../api'
 import classnames from 'classnames'
@@ -30,7 +30,10 @@ export default class extends React.Component<any, IState> {
   getExamples = async () => {
     const { lists } = await Api.getExamples()
 
-    this.setState({ examples: lists })
+    this.setState({
+      examples: lists,
+      activeExample: JSON.parse(JSON.stringify(lists[0]))
+    })
   }
 
   handleSelect = (activeExample: IExample) => () => {
@@ -50,6 +53,40 @@ export default class extends React.Component<any, IState> {
 
     const filePAth = await Api.upload(file)
     console.log(filePAth)
+
+    this.setState(({ activeExample }) => ({
+      activeExample: { ...activeExample, cover_url: filePAth }
+    }))
+  }
+
+  handleInputChange = (
+    key: keyof IExample
+  ): React.ReactEventHandler<HTMLInputElement> => ({ currentTarget }) => {
+    const { value } = currentTarget
+
+    this.setState(({ activeExample }) => ({
+      activeExample: { ...activeExample, [key]: value }
+    }))
+  }
+
+  handleSave = async () => {
+    const { activeExample } = this.state
+
+    console.log(activeExample)
+
+    await Api.updateExample(activeExample)
+
+    this.setState(({ examples, activeExample }) => {
+      const newExamples = examples.map(item => {
+        if (item.id === activeExample.id) {
+          return JSON.parse(JSON.stringify(activeExample))
+        }
+
+        return item
+      })
+
+      return { examples: newExamples }
+    })
   }
 
   render() {
@@ -88,22 +125,24 @@ export default class extends React.Component<any, IState> {
           )}
         </div>
 
-        <Form>
-          <Form.Item>
-            <div className={styles.upload}>
-              <div className={styles['upload-button']}>
-                <Icon type="plus" />
-              </div>
+        <Form
+          labelCol={{ span: 2, offset: 0 }}
+          wrapperCol={{ span: 12, offset: 0 }}
+          labelAlign="left"
+        >
+          <Form.Item label="封面">
+            <div
+              className={styles.upload}
+              style={{ backgroundImage: `url(${activeExample.cover_url})` }}
+            >
+              <Icon type="plus" className={styles.icon} />
 
               <input
+                className={styles.fileinput}
                 type="file"
                 accept=".jpg, .jpeg, .png"
                 onChange={this.handleUpload}
               />
-
-              {activeExample.cover_url && (
-                <img className={styles.img} src={activeExample.cover_url} />
-              )}
             </div>
 
             <Alert
@@ -113,12 +152,24 @@ export default class extends React.Component<any, IState> {
             />
           </Form.Item>
 
-          <Form.Item>
-            <Input className={styles.videourl} />
+          <Form.Item label="案例说明">
+            <Input
+              value={activeExample.picture_info}
+              onChange={this.handleInputChange('picture_info')}
+            />
           </Form.Item>
 
-          <Form.Item>
-            <Button className={styles.save}>保存</Button>
+          <Form.Item label="视频地址">
+            <Input
+              value={activeExample.video_url}
+              onChange={this.handleInputChange('video_url')}
+            />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ span: 4, offset: 2 }}>
+            <Button type="primary" size="large" onClick={this.handleSave}>
+              保存
+            </Button>
           </Form.Item>
         </Form>
       </div>

@@ -12,7 +12,6 @@
     "axios": "^0.19.0",
     "classnames": "^2.2.6",
     "crypto-random-string": "^3.0.1",
-    "randombytes": "^2.1.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-router-dom": "^5.0.1",
@@ -43,7 +42,6 @@
   "devDependencies": {
     "@types/ali-oss": "^6.0.4",
     "@types/classnames": "^2.2.9",
-    "@types/randombytes": "^2.0.0",
     "@types/react-router-dom": "^4.3.5",
     "babel-plugin-import": "^1.12.1",
     "customize-cra": "^0.6.0",

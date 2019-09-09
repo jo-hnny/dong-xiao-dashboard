@@ -26,6 +26,7 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(
   ({ status, data }) => {
+    console.log('status', status)
     if (status !== 200) {
       notification.error({ message: '服务器错误！' })
 
@@ -46,7 +47,11 @@ axios.interceptors.response.use(
   },
 
   error => {
-    console.log(error)
+    notification.error({
+      message: '服务器错误！'
+    })
+
+    return Promise.reject()
   }
 )
 

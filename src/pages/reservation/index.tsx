@@ -39,8 +39,9 @@ export default class extends React.Component<any, IState> {
   }
 
   getReservations = async () => {
-    const { list } = await Api.getReservations()
-    this.setState({ reservations: list })
+    const rsp = await Api.getReservations()
+
+    console.log(rsp)
   }
 
   render() {
