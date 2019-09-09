@@ -2,6 +2,7 @@ import React from 'react'
 import Api from '../../api'
 import { IReservations } from '../../types'
 import { Table } from 'antd'
+import dayjs from 'dayjs'
 
 interface IState {
   reservations: IReservations[]
@@ -20,7 +21,8 @@ export default class extends React.Component<any, IState> {
 
     {
       title: '电话',
-      dataIndex: 'number'
+      dataIndex: 'number',
+      key: 'number'
     },
 
     {
@@ -30,7 +32,10 @@ export default class extends React.Component<any, IState> {
 
     {
       title: '提交时间',
-      dataIndex: 'created_at'
+      dataIndex: 'created_at',
+      render(text: string) {
+        return dayjs.unix(parseInt(text)).format('YYYY-MM-DD HH:mm')
+      }
     }
   ]
 
@@ -39,13 +44,15 @@ export default class extends React.Component<any, IState> {
   }
 
   getReservations = async () => {
-    const rsp = await Api.getReservations()
+    const { list } = await Api.getReservations()
 
-    console.log(rsp)
+    this.setState({ reservations: list })
   }
 
   render() {
     const { reservations } = this.state
-    return <Table columns={this.columns} dataSource={reservations} />
+    return (
+      <Table columns={this.columns} dataSource={reservations} rowKey="id" />
+    )
   }
 }

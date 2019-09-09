@@ -35,15 +35,19 @@ axios.interceptors.response.use(
 
     const { statusCode, message } = data
 
-    if (statusCode !== 200) {
-      notification.error({
-        message
-      })
-
-      return Promise.reject()
+    if (statusCode === 200) {
+      return data.data
     }
 
-    return data.data
+    if (statusCode === 401) {
+      window.location.href = '#/login'
+    }
+
+    notification.error({
+      message
+    })
+
+    return Promise.reject()
   },
 
   error => {
