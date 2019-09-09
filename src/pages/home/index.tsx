@@ -40,11 +40,14 @@ export default class extends React.Component<any> {
         <Layout className={styles.content}>
           <Content>
             <Router>
-              <Redirect from={match.url} to={`${match.url}/example`} exact />
-              <Route path={`${match.url}/example`} component={Example} />
+              {location.pathname === '/home' && (
+                <Redirect to={`${match.url}/example`} exact />
+              )}
+              <Route path={`${match.url}/example`} component={Example} exact />
               <Route
                 path={`${match.url}/reservation`}
                 component={Reservation}
+                exact
               />
             </Router>
           </Content>

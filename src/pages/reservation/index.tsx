@@ -6,11 +6,19 @@ import dayjs from 'dayjs'
 
 interface IState {
   reservations: IReservations[]
+
+  count: number
+
+  page: number
 }
 
 export default class extends React.Component<any, IState> {
   state: IState = {
-    reservations: []
+    reservations: [],
+
+    count: 0,
+
+    page: 1
   }
 
   columns = [
@@ -43,16 +51,26 @@ export default class extends React.Component<any, IState> {
     this.getReservations()
   }
 
-  getReservations = async () => {
-    const { list } = await Api.getReservations()
+  getReservations = async (page = 1) => {
+    const { list, count } = await Api.getReservations(page)
 
-    this.setState({ reservations: list })
+    this.setState({ reservations: list, count, page })
   }
 
   render() {
-    const { reservations } = this.state
+    const { reservations, count, page } = this.state
     return (
-      <Table columns={this.columns} dataSource={reservations} rowKey="id" />
+      <Table
+        columns={this.columns}
+        dataSource={reservations}
+        pagination={{
+          current: page,
+          defaultPageSize: 20,
+          total: count,
+          onChange: this.getReservations
+        }}
+        rowKey="id"
+      />
     )
   }
 }
