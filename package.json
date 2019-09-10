@@ -49,5 +49,6 @@
     "node-sass": "^4.12.0",
     "react-app-rewired": "^2.1.3"
   },
-  "proxy": "http://d.hzdongxiao.com"
+  "proxy": "http://d.hzdongxiao.com",
+  "homepage": "http://d.hzdongxiao.com/static/dashboard"
 }

@@ -5,10 +5,41 @@ import { IExample } from '../../types'
 import Api from '../../api'
 import classnames from 'classnames'
 
+const SizeMap = {
+  0: {
+    width: 165,
+
+    height: 270
+  },
+
+  1: {
+    width: 135,
+    height: 135
+  },
+
+  2: {
+    width: 195,
+    height: 135
+  },
+
+  3: {
+    width: 165,
+    height: 270
+  },
+
+  4: { width: 195, height: 135 },
+
+  5: {
+    width: 135,
+    height: 135
+  }
+}
 interface IState {
   examples: IExample[]
 
   activeExample: IExample
+
+  activeIndex: keyof typeof SizeMap
 }
 
 export default class extends React.Component<any, IState> {
@@ -21,8 +52,11 @@ export default class extends React.Component<any, IState> {
       cover_url: '',
       picture_info: '',
       video_url: ''
-    }
+    },
+
+    activeIndex: 0
   }
+
   componentDidMount() {
     this.getExamples()
   }
@@ -36,9 +70,11 @@ export default class extends React.Component<any, IState> {
     })
   }
 
-  handleSelect = (activeExample: IExample) => () => {
+  handleSelect = (activeExample: IExample, activeIndex: number) => () => {
     this.setState({
-      activeExample: JSON.parse(JSON.stringify(activeExample))
+      activeExample: JSON.parse(JSON.stringify(activeExample)),
+
+      activeIndex: activeIndex as keyof typeof SizeMap
     })
   }
 
@@ -90,7 +126,7 @@ export default class extends React.Component<any, IState> {
   }
 
   render() {
-    const { examples, activeExample } = this.state
+    const { examples, activeExample, activeIndex } = this.state
     return (
       <div className={styles.example}>
         <div className={styles.wall}>
@@ -101,13 +137,16 @@ export default class extends React.Component<any, IState> {
                   [styles.active]: activeExample.id === id
                 })}
                 key={index}
-                onClick={this.handleSelect({
-                  id,
-                  name,
-                  cover_url,
-                  picture_info,
-                  video_url
-                })}
+                onClick={this.handleSelect(
+                  {
+                    id,
+                    name,
+                    cover_url,
+                    picture_info,
+                    video_url
+                  },
+                  index
+                )}
               >
                 <div
                   className={styles.bg}
@@ -133,7 +172,11 @@ export default class extends React.Component<any, IState> {
           <Form.Item label="封面">
             <div
               className={styles.upload}
-              style={{ backgroundImage: `url(${activeExample.cover_url})` }}
+              style={{
+                backgroundImage: `url(${activeExample.cover_url})`,
+                width: `${SizeMap[activeIndex].width}px`,
+                height: `${SizeMap[activeIndex].height}px`
+              }}
             >
               <Icon type="plus" className={styles.icon} />
 
